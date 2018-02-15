@@ -1,0 +1,25 @@
+{
+  "name": "forecasting_service",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "express": "~4.0.0",
+    "sys": "0.0.1"
+  },
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "version": "1.0.0",
+  "description": "server for forecasting service",
+  "devDependencies": {}
+}

@@ -1,0 +1,4 @@
+node_modules
+npm-debug.log
+r_server/.Rhistory
+r_server/.RData
