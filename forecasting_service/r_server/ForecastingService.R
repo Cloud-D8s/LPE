@@ -130,7 +130,7 @@ if(length(target) == 0) {
               }
             
               # Creating connection to MongoDB for score and duration data in case of SINGLE type of processing
-              
+              print("Influx Db auth passwd")
               mongo.db.name <- "performancedata"
               collection.name <- "metrics"
               mongo.dbhost.prefix <- "--mongo.dbhost="
@@ -152,6 +152,7 @@ if(length(target) == 0) {
                 
                 mongo.user <- "root"
                 mongo.password <- "root"
+               
                 if((length(mongo.dbuser) != 0) && (length(mongo.dbpassword) != 0)) {
                   mongo.user <- substring(mongo.dbuser,
                                            nchar(mongo.dbuser.prefix) + 1,
@@ -172,6 +173,8 @@ if(length(target) == 0) {
                 mongo.con <- mongo(collection = collection.name,
                                    db = mongo.db.name,
                                    url = mongo.url)
+                print("mongo Db auth passwd")
+                
               }
             }
           }
