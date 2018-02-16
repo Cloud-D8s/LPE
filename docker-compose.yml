@@ -12,37 +12,64 @@ services:
       - mongodb
       - influxdb
   mongodb:
-      image: mongo:latest
-      container_name: "mongodb"
-      environment:
-        - MONGO_DATA_DIR=/data/db
-        - MONGO_LOG_DIR=/dev/null
-        - MONGODB_USER="user"
-        - MONGODB_PASS="pass"
-      volumes:
-        - ./data/db:/data/db
-      ports:
-          - "27017:27017"
-      command: mongod --smallfiles --logpath=/dev/null --auth # --quiet
+    image: mongo:latest
+    container_name: "mongodb"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+      - MONGODB_USER="user"
+      - MONGODB_PASS="pass"
+    volumes:
+      - ./data/db:/data/db
+    ports:
+        - "27017:27017"
+    command: mongod --smallfiles --logpath=/dev/null --auth # --quiet
+  # Define a Telegraf service
+  telegraf:
+    image: telegraf:latest
+    volumes:
+      - ./etc/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    links:
+      - influxdb
+    ports:
+      - "8092:8092/udp"
+      - "8094:8094"
+      - "8125:8125/udp"
   influxdb:
     image: influxdb:latest
     container_name: "influxdb"
     ports:
-      - "8083:8083"
       - "8086:8086"
       - "8090:8090"
     environment:
-      - INFLUXDB_DATA_ENGINE=tsm1
       - INFLUXDB_REPORTING_DISABLED=false
-      - INFLUXDB_ADMIN_ENABLED=true
       - INFLUXDB_HTTP_AUTH_ENABLED=true
-      - INFLUXDB_DB=db0
-      - INFLUXDB_ADMIN_USER = root
-      - INFLUXDB_ADMIN_PASSWORD= root
+      - INFLUXDB_ADMIN_USER=root
+      - INFLUXDB_ADMIN_PASSWORD=root
     volumes:
       # Data persistency
       # sudo mkdir -p /srv/docker/influxdb/data
       - /srv/docker/influxdb/data:/var/lib/influxdb
+  chronograf:
+    image: chronograf:latest
+    environment:
+      INFLUXDB_URL: http://influxdb:8086
+      KAPACITOR_URL: http://kapacitor:9092
+    ports:
+      - "8888:8888"
+    links:
+      - influxdb
+      - kapacitor
+  # Define a Kapacitor service
+  kapacitor:
+    image: kapacitor:latest
+    environment:
+      KAPACITOR_HOSTNAME: kapacitor
+      KAPACITOR_INFLUXDB_0_URLS_0: http://influxdb:8086
+    links:
+      - influxdb
+    ports:
+      - "9092:9092"
   grafana:
     image: grafana/grafana:latest
     container_name: "grafana"
