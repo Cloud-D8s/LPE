@@ -9,7 +9,7 @@
  */
 const express    = require('express');
 const app        = express();
-const port       = process.env.FORECASTING_SERVICE_PORT || 3000; // set our port
+const port       = process.env.FORECASTING_SERVICE_PORT || 8080; // set our port
 /**
  * ROUTES FOR OUR API
  * Create our router
@@ -39,6 +39,26 @@ router.route('/executeForecasting')
     {
         const exec = require('child_process').exec;
         exec("Rscript ForecastingService.R --target=test1.csv --starttime=1518524056 --type=BATCH", {cwd: './r_server'},function (error, stdout, stderr)
+        {
+            var lines = stdout.toString().split('\n');
+            console.log(lines);
+            if(error) {
+                var err = error.toString().split('\n');
+                console.log(err);
+            }
+            if(stderr) {
+                var stderrr = stderr.toString().split('\n');
+                console.log(stderrr);
+            }
+        });
+        res.json( "Running: You can check the visualization");
+    });
+
+router.route('/execute')
+    .get(function(req, res)
+    {
+        const exec = require('child_process').exec;
+        exec("Rscript ForecastingService.R --target=test1.csv --starttime=1518524056 --type=SINGLE --client=client1 --predsteps=10 --influx.dbhost=influxdb:8086 --influx.dbuser=root --influx.dbpassword=root --mongo.dbhost=mongodb --mongo.dbuser=user --mongo.dbpassword=pass", {cwd: './r_server'},function (error, stdout, stderr)
         {
             var lines = stdout.toString().split('\n');
             console.log(lines);
