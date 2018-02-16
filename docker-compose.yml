@@ -43,9 +43,7 @@ services:
       - "8090:8090"
     environment:
       - INFLUXDB_REPORTING_DISABLED=false
-      - INFLUXDB_HTTP_AUTH_ENABLED=true
-      - INFLUXDB_ADMIN_USER=root
-      - INFLUXDB_ADMIN_PASSWORD=root
+      - INFLUXDB_HTTP_AUTH_ENABLED=false
     volumes:
       # Data persistency
       # sudo mkdir -p /srv/docker/influxdb/data
