@@ -17,14 +17,15 @@ services:
     container_name: "mongodb"
     environment:
       - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null
       - MONGODB_USER=user
       - MONGODB_PASS=pass
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=pass
     volumes:
       - ./data/db:/data/db
     ports:
         - "27017:27017"
-    command: mongod --smallfiles --logpath=/dev/null --auth # --quiet
+    command: mongod --auth # --quiet
   # Define a Telegraf service
   telegraf:
     image: telegraf:latest
