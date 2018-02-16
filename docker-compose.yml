@@ -8,6 +8,7 @@ services:
     restart: always
     links:
       - mongodb
+      - influxdb
     depends_on:
       - mongodb
       - influxdb
