@@ -20,6 +20,8 @@ curl -L https://github.com/docker/compose/releases/download/1.13.0/docker-compos
 chmod +x /usr/local/bin/docker-compose
 cd ..
 #build and run container
+sudo mkdir -p /srv/docker/influxdb/data
+sudo mkdir -p ./data/db
 sudo docker-compose up --build&
 read -p "Press enter to Exit"
 
