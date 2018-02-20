@@ -12,7 +12,3 @@ COPY datasources /etc/grafana/datasources
 COPY defaults.ini /etc/grafana/defaults.ini
 COPY provisioning /etc/grafana/provisioning
 WORKDIR /app
-COPY entrypoint.sh ./
-RUN chmod u+x entrypoint.sh
-
-ENTRYPOINT ["/app/entrypoint.sh"]
