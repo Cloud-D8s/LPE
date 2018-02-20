@@ -20,11 +20,9 @@ if [ ! -f "/var/lib/grafana/.init" ]; then
       echo installed $datasource;
       post "$(envsubst < $datasource)" "/api/datasources"
     done
-
-#    for dashboard in /etc/grafana/dashboards/*; do
-#        post "$(cat $dashboard)" "/api/dashboards/db"
-#    done
-
+    for dashboard in /etc/grafana/dashboards/*; do
+        post "$(cat $dashboard)" "/api/dashboards/db"
+    done
     touch "/var/lib/grafana/.init"
 
     kill $(pgrep grafana)

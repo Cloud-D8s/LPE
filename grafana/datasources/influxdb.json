@@ -4,5 +4,5 @@
   "url": "http://influxdb:8086",
   "access": "proxy",
   "database": "client1",
-  "basicAuth": false
+  "basicAuth": true
 }

@@ -6,9 +6,11 @@ RUN apt-get update && \
 
 RUN mkdir -p /etc/grafana/dashboards
 RUN mkdir -p /etc/grafana/datasources
+RUN mkdir -p /etc/grafana/provisioning
 COPY dashboards /etc/grafana/dashboards
 COPY datasources /etc/grafana/datasources
-COPY grafana.ini /etc/grafana/grafana.ini
+COPY defaults.ini /etc/grafana/defaults.ini
+COPY provisioning /etc/grafana/provisioning
 WORKDIR /app
 COPY entrypoint.sh ./
 RUN chmod u+x entrypoint.sh
