@@ -57,3 +57,6 @@ typings/
 # dotenv environment variables file
 .env
 
+#custom files
+./forecasting_service/r_server/.Rhistory
+

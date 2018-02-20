@@ -50,16 +50,6 @@ services:
       # Data persistency
       # sudo mkdir -p /srv/docker/influxdb/data
       - /srv/docker/influxdb/data:/var/lib/influxdb
-  chronograf:
-    image: chronograf:latest
-    environment:
-      INFLUXDB_URL: http://influxdb:8086
-      KAPACITOR_URL: http://kapacitor:9092
-    ports:
-      - "8888:8888"
-    links:
-      - influxdb
-      - kapacitor
   # Define a Kapacitor service
   kapacitor:
     image: kapacitor:latest
@@ -77,5 +67,9 @@ services:
       - "3000:3000"
     environment:
       - GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./etc/dashboards:/var/lib/grafana/dashboards
     links:
       - influxdb
