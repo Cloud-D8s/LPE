@@ -8,7 +8,7 @@ RUN mkdir -p /etc/grafana/dashboards
 RUN mkdir -p /etc/grafana/datasources
 COPY dashboards /etc/grafana/dashboards
 COPY datasources /etc/grafana/datasources
-
+COPY grafana.ini /etc/grafana/grafana.ini
 WORKDIR /app
 COPY entrypoint.sh ./
 RUN chmod u+x entrypoint.sh

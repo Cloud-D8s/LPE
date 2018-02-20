@@ -2,7 +2,7 @@
   "name": "InfluxDb",
   "type": "influxdb",
   "url": "http://influxdb:8086",
-  "access": "direct",
+  "access": "proxy",
   "database": "client1",
   "basicAuth": false
 }
