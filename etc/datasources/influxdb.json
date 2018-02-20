@@ -1,0 +1,8 @@
+{
+  "name": "InfluxDb",
+  "type": "influxdb",
+  "url": "http://influxdb:8086",
+  "access": "direct",
+  "database": "client1",
+  "basicAuth": false
+}
