@@ -50,16 +50,6 @@ services:
       # Data persistency
       # sudo mkdir -p /srv/docker/influxdb/data
       - /srv/docker/influxdb/data:/var/lib/influxdb
-  # Define a Kapacitor service
-  kapacitor:
-    image: kapacitor:latest
-    environment:
-      KAPACITOR_HOSTNAME: kapacitor
-      KAPACITOR_INFLUXDB_0_URLS_0: http://influxdb:8086
-    links:
-      - influxdb
-    ports:
-      - "9092:9092"
   grafana:
     build: grafana
     container_name: "grafana"
