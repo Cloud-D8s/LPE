@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Forecasting Service</title>
+    <meta charset="utf-8" />
+    <!-- Favicons
+    ================================================== -->
+    <link rel="shortcut icon" href="images/fav.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--[if lte IE 8]><script src="/assets/js/ie/html5shiv.js"></script><![endif]-->
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <!--[if lte IE 8]><link rel="stylesheet" href=".assets/css/ie8.css" /><![endif]-->
+    <!--[if lte IE 9]><link rel="stylesheet" href=".assets/css/ie9.css" /><![endif]-->
+</head>
+<body>
+<div class="wrapper">
+  <div>
+    {{#if error}}
+      <p class="alert alert-warning">{{error}}</p>
+    {{/if}}
+
+    {{#if success}}
+      <p class="alert alert-success">{{success}}</p>
+    {{/if}}
+
+    {{#if notice}}
+      <p class="alert alert-info">{{notice}}</p>
+    {{/if}}
+
+    <!--where our other templates will insert-->
+    {{{body}}}
+
+
+  </div> <!-- /container -->
+</div>
+</body>
+</html>
+
