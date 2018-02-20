@@ -61,7 +61,7 @@ services:
     ports:
       - "9092:9092"
   grafana:
-    image: grafana/grafana:latest
+    build: grafana
     container_name: "grafana"
     ports:
       - "3000:3000"
@@ -72,9 +72,5 @@ services:
     volumes:
       - ./etc/grafanaEntrypoint.sh:/etc/grafana/grafanaEntrypoint.sh
       - ./etc/grafana.ini:/etc/grafana/grafana.ini
-      - ./etc/dashboards:/var/lib/grafana/dashboards
-      - ./etc/datasources:/etc/grafana/datasources
     links:
       - influxdb
-    entrypoint:
-      - sh /grafanaEntrypoint.sh
