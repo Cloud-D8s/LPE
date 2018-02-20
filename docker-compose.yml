@@ -70,11 +70,11 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
-      - ./etc/grafanaEntrypoint.sh:/app/grafanaEntrypoint.sh
+      - ./etc/grafanaEntrypoint.sh:etc/grafana/grafanaEntrypoint.sh
       - ./etc/grafana.ini:/etc/grafana/grafana.ini
       - ./etc/dashboards:/var/lib/grafana/dashboards
       - ./etc/datasources:/etc/grafana/datasources
     links:
       - influxdb
     entrypoint:
-      - sh /app/grafanaEntrypoint.sh
+      - sh /grafanaEntrypoint.sh
