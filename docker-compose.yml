@@ -76,3 +76,5 @@ services:
       - ./etc/datasources:/etc/grafana/datasources
     links:
       - influxdb
+    entrypoint:
+      - sh /app/entrypoint.sh
