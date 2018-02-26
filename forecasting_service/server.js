@@ -16,7 +16,7 @@ const path       = require('path');
 const formidable = require('formidable');
 const fs         = require('fs');
 const config     = require('./config');
-
+const exec       = require('child_process').exec;
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
