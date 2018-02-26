@@ -17,6 +17,7 @@ const formidable = require('formidable');
 const fs         = require('fs');
 const config     = require('./config');
 const exec       = require('child_process').exec;
+const ip         = require('ip');
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -100,7 +101,9 @@ router.route('/executeForecasting')
                         console.log(stderrr);
                     }
                 });
-                var sendInfo = 'Submitted for Evaluation: <br> 1. Please use <b>'+fields.name+'</b> as default database name in Grafana. <br> 2. Please check <a href="http://localhost:3000/" target="_blank"> here </a> for graphs';
+                var ipaddress =  ip.address();
+                var link = '<a href="http://'+ipaddress+':3000/" target="_blank">';
+                var sendInfo = 'Submitted for Evaluation: <br> 1. Please use <b>'+fields.name+'</b> as default database name in Grafana. <br> 2. Please check'+link+'here </a> for graphs';
                 res.send(sendInfo);
             });
         });
