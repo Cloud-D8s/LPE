@@ -117,7 +117,7 @@ router.route('/executeForecasting')
  */
 app.use('/forecasting', router);
 
-app.get('/sendMessage', function(req, res){
+app.post('/sendMessage', function(req, res){
     var data=req.body;
     var smtpTransport = nodemailer.createTransport({
         service: "gmail",
