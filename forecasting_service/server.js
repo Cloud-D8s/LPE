@@ -18,6 +18,7 @@ const fs         = require('fs');
 const config     = require('./config');
 const exec       = require('child_process').exec;
 const publicIp   = require('public-ip');
+const nodemailer = require("nodemailer");
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -115,6 +116,32 @@ router.route('/executeForecasting')
  * our router is now pointing to /forecasting
  */
 app.use('/forecasting', router);
+
+app.get('/sendMessage', function(req, res){
+    var data=req.body;
+    var smtpTransport = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: "",
+            pass: ""
+        }});
+
+    smtpTransport.sendMail({  //email options
+        from: data.email,
+        to: "v.podolskiy@tum.de", // receiver
+        subject: "[ForeCasting Service]", // subject
+        text: "\n##- Please type your reply above this line -## \n\nName:"+data.name+"\n\nEmail-Id: "+data.email +"\n\n _____Message from User________\n\n"+data.message // body
+    }, function(error, info){  //callback
+        if(error){
+            console.log(error);
+        }else{
+            console.log("Message sent: " + info.response);
+        }
+        smtpTransport.close();
+    });
+
+    res.send("Message Sent");
+});
 //displays our homepage
 app.get('/', function(req, res){
     res.render('home');

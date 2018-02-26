@@ -103,17 +103,17 @@
                         <h2>Send a message</h2>
                         <p>Please fill out the form below to send us an email and we will get back to you as soon as possible.</p>
                     </div>
-                    <form name="sentMessage" id="contactForm" novalidate>
+                    <form id="contactForm" method="post" action="/sendMessage" novalidate>
                         <div class="row">
                             <div class="6u 12u$(medium)">
                                 <div class="form-group">
-                                    <input type="text" id="namemsg" class="form-control" placeholder="Name" required="required">
+                                    <input type="text" name="name" id="namemsg" class="form-control" placeholder="Name" required="required">
                                     <p class="help-block text-danger"></p>
                                 </div>
                             </div>
                             <div class="6u 12u$(medium)">
                                 <div class="form-group">
-                                    <input type="email" id="emailmsg" class="form-control" placeholder="Email" required="required">
+                                    <input type="email" name="email" id="emailmsg" class="form-control" placeholder="Email" required="required">
                                     <p class="help-block text-danger"></p>
                                 </div>
                             </div>
@@ -182,6 +182,21 @@
             return false;
         });
 
+        $('#contactForm').submit(function(event) {
+            // process the form
+            $(this).ajaxSubmit({
+                error: function(xhr) {
+                    status('Error: ' + xhr.status);
+                },
+                success: function(response) {
+                    $("#status").empty().text(response);
+                    console.log(response);
+                    $('#contactForm').append('<br><br><div class="alert alert-success">' + response + '</div>');
+                }
+            });
+            // stop the form from submitting the normal way and refreshing the page
+            return false;
+        });
     });
 
 </script>
