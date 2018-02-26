@@ -73,16 +73,19 @@
         <p>Upload the CSV File containg the workload requests here to test our service.</p>
 
         <section>
-            <form method="post" action="#">
+            <form id="uploadForm" method="post" action="/forecasting/executeForecasting" enctype="multipart/form-data">
                 <div class="row uniform 50%">
                     <div class="6u 12u$(xsmall)">
-                        <input type="text" name="name" id="demo-name" value="" placeholder="Name" />
+                        <input type="text" name="name" id="demo-name" value="" placeholder="First Name" required="required" />
                     </div>
                     <div class="6u$ 12u$(xsmall)">
-                        <input type="email" name="email" id="demo-email" value="" placeholder="Email" />
+                        <input type="email" name="email" id="demo-email" value="" placeholder="Email" required="required" />
                     </div>
-                    <div class="12u$ 12u$(xsmall)">
-                        <input type="file" name="file" id="demo-file" value="Select File" placeholder="File Path" />
+                    <div class="6u 12u$(xsmall)">
+                        <input type="file" name="filetoupload" id="demo-name" value="" placeholder="File Path" required="required"/>
+                    </div>
+                    <div class="6u$ 12u$(xsmall)">
+                        <input type="text" name="predictSteps" id="demo-email" value="10" placeholder="Prediction Time Steps" required="required" />
                     </div>
                     <div class="12u$">
                         <ul class="actions">
@@ -165,3 +168,27 @@
 <script src="/assets/js/util.js"></script>
 <!--[if lte IE 8]><script src="/assets/js/ie/respond.min.js"></script><![endif]-->
 <script src="/assets/js/main.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
+<script>
+    $(document).ready(function() {
+
+        // process the form
+        $('#uploadForm').submit(function(event) {
+            // process the form
+            $(this).ajaxSubmit({
+                error: function(xhr) {
+                    status('Error: ' + xhr.status);
+                },
+                success: function(response) {
+                    $("#status").empty().text(response);
+                    console.log(response);
+                    $('#uploadForm').append('<br><br><div style="text-align: left" class="alert alert-success">' + response + '</div>');
+                }
+            });
+            // stop the form from submitting the normal way and refreshing the page
+            return false;
+        });
+
+    });
+
+</script>

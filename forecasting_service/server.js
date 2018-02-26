@@ -13,6 +13,9 @@ const port       = process.env.FORECASTING_SERVICE_PORT || 8080; // set our port
 const bodyParser = require('body-parser');
 const exphbs     = require('express-handlebars');
 const path       = require('path');
+const formidable = require('formidable');
+const fs         = require('fs');
+const config     = require('./config');
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -26,7 +29,7 @@ var hbs = exphbs.create({
     helpers: {
         toJSON: function (object) {
             return JSON.stringify(object, null,'\t');
-        },
+        }
 
 
     }
@@ -60,54 +63,47 @@ router.get('/', function(req, res) {
  * Route1:  run the forecasting service
  */
 router.route('/executeForecasting')
-    .get(function(req, res)
+    .post(function(req, res)
     {
-        const exec = require('child_process').exec;
-        exec("Rscript ForecastingService.R --target=test1.csv --starttime=1518524056 --type=BATCH", {cwd: './r_server'},function (error, stdout, stderr)
-        {
-            var lines = stdout.toString().split('\n');
-            console.log(lines);
-            if(error) {
-                var err = error.toString().split('\n');
-                console.log(err);
-            }
-            if(stderr) {
-                var stderrr = stderr.toString().split('\n');
-                console.log(stderrr);
-            }
+        var form = new formidable.IncomingForm();
+        form.parse(req, function (err, fields, files) {
+            console.log(fields);
+            var oldpath = files.filetoupload.path;
+            fields.name = fields.name.replace(/\s/g, '');
+            var newpath = './r_server/files_uploaded/' + fields.name + '_' + 'testData.csv';
+            var pathToExecuteScript = './files_uploaded/' + fields.name + '_' + 'testData.csv';
+            fs.rename(oldpath, newpath, function (err) {
+                if (err) throw err;
+                var cmd = "Rscript ForecastingService.R " +
+                    "--target="+pathToExecuteScript + " " +
+                    "--starttime=1518524056 " +
+                    "--type=SINGLE " +
+                    "--client="+fields.name+" " +
+                    "--predsteps="+fields.predictSteps+" " +
+                    "--influx.dbhost="+config.influxdb.host+":"+config.influxdb.port+" " +
+                    "--influx.dbuser="+config.influxdb.user+" " +
+                    "--influx.dbpassword="+config.influxdb.password+" " +
+                    "--mongo.dbhost="+config.mongodb.host+" " +
+                    "--mongo.dbuser="+config.mongodb.user+" " +
+                    "--mongo.dbpassword="+config.mongodb.password;
+                console.log(cmd);
+                exec(cmd, {cwd: './r_server'},function (error, stdout, stderr)
+                {
+                    var lines = stdout.toString().split('\n');
+                    console.log(lines);
+                    if(error) {
+                        var err = error.toString().split('\n');
+                        console.log(err);
+                    }
+                    if(stderr) {
+                        var stderrr = stderr.toString().split('\n');
+                        console.log(stderrr);
+                    }
+                });
+                var sendInfo = 'Submitted for Evaluation: <br> 1. Please use <b>'+fields.name+'</b> as default database name in Grafana. <br> 2. Please check <a href="http://localhost:3000/" target="_blank"> here </a> for graphs';
+                res.send(sendInfo);
+            });
         });
-        res.json( "Running: You can check the visualization");
-    });
-
-router.route('/execute')
-    .get(function(req, res)
-    {
-        const exec = require('child_process').exec;
-
-        var cmd  = "Rscript ForecastingService.R --target=test1.csv --starttime=1518524056 --type=SINGLE --client=client1 --predsteps=10 --influx.dbhost=influxdb:8086 --influx.dbuser=root --influx.dbpassword=root --mongo.dbhost=mongodb --mongo.dbuser=user --mongo.dbpassword=pass";
-
-        exec(cmd, {cwd: './r_server'},function (error, stdout, stderr)
-        {
-            var lines = stdout.toString().split('\n');
-            console.log(lines);
-            if(error) {
-                var err = error.toString().split('\n');
-                console.log(err);
-            }
-            if(stderr) {
-                var stderrr = stderr.toString().split('\n');
-                console.log(stderrr);
-            }
-        });
-        res.json( "Running: You can check the visualization");
-    });
-/**
- * Route2:  anything else
- */
-router.route('/other')
-    .get(function(req, res)
-    {
-            res.send('Success');
     });
 /**
  * REGISTER OUR ROUTES
@@ -118,9 +114,5 @@ app.use('/forecasting', router);
 app.get('/', function(req, res){
     res.render('home');
 });
-/**
- * Start the server
- * our router is now pointing to /exercises
- */
 app.listen(port);
 console.log('Server started and listening on port ' + port);
