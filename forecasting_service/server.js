@@ -78,7 +78,7 @@ router.route('/executeForecasting')
                 if (err) throw err;
                 var cmd = "Rscript ForecastingService.R " +
                     "--target="+pathToExecuteScript + " " +
-                    "--starttime=1518524056 " +
+                    "--starttime="+fields.timestamp + " " +
                     "--type=SINGLE " +
                     "--client="+fields.name+" " +
                     "--predsteps="+fields.predictSteps+" " +
