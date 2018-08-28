@@ -1,7 +1,7 @@
 #!bin/sh
 echo "setup"
 sudo iptables -P INPUT ACCEPT
-sudo apt-get install \
+sudo apt-get install -y \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -13,7 +13,7 @@ sudo add-apt-repository \
    stable"
 sudo apt-get update
 #docker Installation
-sudo apt-get install docker-ce
+sudo apt-get install -y docker-ce
 #sudo iptables -A INPUT -p tcp --dport 3000 -j ACCEPT
 #docker-compose Installation
 curl -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
