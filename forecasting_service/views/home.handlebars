@@ -93,7 +93,7 @@
             </form>
             <div class="row 150%">
                 <div class="12u 12u$(medium)">
-                    <select name="selectTestName" onchange="getTestValues(this);"  data-placeholder="Select Test Name..." tabindex="1">
+                    <select id="selectTestName" onchange="getTestValues(this);">
 
                     </select>
                 </div>
@@ -109,7 +109,6 @@
                             <th>Approach Name</th>
                             <th>Score</th>
                             <th>Duration to Compute Result(in sec)</th>
-                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -119,7 +118,6 @@
                             <th>Approach Name</th>
                             <th>Score</th>
                             <th>Duration to Compute Result(in sec)</th>
-                            <th></th>
                         </tr>
                         </tfoot>
                     </table>
@@ -275,116 +273,122 @@
 <script>
     function getTestValues(testName) {
         $.get(
-                "/getTestData",{"testName":testName},
-                function(data) {
+                "/forecasting/getTestData",{"testName":testName.value},
+                function(responseData) {
 
-                    document.getElementById("selectedTestName").innerHTML = testName;
 
-                    var inst = [];
-                    inst.push("ETS");
-                    inst.push(data["ETS"].score);
-                    inst.push(data["ETS"].duration);
 
-                    allData.push(inst);
 
-                    var inst = [];
-                    inst.push("SARIMA");
-                    if(inst.push(data["SARIMA"])){
-                        inst.push(data["SARIMA"].score);
-                        inst.push(data["SARIMA"].duration);
-                    }else{
-                        inst.push("");
-                        inst.push("");
-                    }
+                    document.getElementById("selectedTestName").innerHTML = testName.value;
+                    //document.getElementById('testResult').innerHTML='';
+                    var allData = []
+                    responseData.forEach(function (data) {
 
-                    allData.push(inst);
+                        var instETS = [];
+                        instETS.push("ETS");
+                        instETS.push(data["ETS"].score);
+                        instETS.push(data["ETS"].duration);
+                        allData.push(instETS);
 
-                    var inst = [];
-                    inst.push("SOAARIMA");
-                    if(inst.push(data["SOAARIMA"])) {
-                        inst.push(data["SOAARIMA"].score);
-                        inst.push(data["SOAARIMA"].duration);
-                    }else{
-                        inst.push("");
-                        inst.push("");
-                    }
-                    allData.push(inst);
-                    var inst = [];
-                    inst.push("SARIMA+GARCH");
-                    if(inst.push(data["SARIMA+GARCH"])) {
-                        inst.push(data["SARIMA+GARCH"].score);
-                        inst.push(data["SARIMA+GARCH"].duration);
-                    }else{
-                        inst.push("");
-                        inst.push("");
-                    }
-                    allData.push(inst);
-                    var inst = [];
-                    inst.push("SOAARIMA+GARCH");
-                    if(inst.push(data["SOAARIMA+GARCH"])) {
-                        inst.push(data["SOAARIMA+GARCH"].score);
-                        inst.push(data["SOAARIMA+GARCH"].duration);
-                    }else {
-                        inst.push("");
-                        inst.push("");
-                    }
-                    allData.push(inst);
-                    var inst = [];
-                    inst.push("SARFIMA");
-                    if(inst.push(data["SARFIMA"])) {
-                        inst.push(data["SARFIMA"].score);
-                        inst.push(data["SARFIMA"].duration);
-                    }else {
-                        inst.push("");
-                        inst.push("");
-                    }
-                    allData.push(inst);
-                    var inst = [];
-                    inst.push("SARFIMA+GARCH");
-                    if(inst.push(data["SARFIMA+GARCH"])) {
-                        inst.push(data["SARFIMA+GARCH"].score);
-                        inst.push(data["SARFIMA+GARCH"].duration);
-                    }else {
-                        inst.push("");
-                        inst.push("");
-                    }
-                    allData.push(inst);
+                        var instSARIMA = [];
+                        instSARIMA.push("SARIMA");
+                        if (data["SARIMA"]) {
+                            instSARIMA.push(data["SARIMA"].score);
+                            instSARIMA.push(data["SARIMA"].duration);
+                        } else {
+                            instSARIMA.push("");
+                            instSARIMA.push("");
+                        }
 
-                    var inst = [];
-                    inst.push("LM");
-                    if(inst.push(data["LM"])) {
-                        inst.push(data["LM"].score);
-                        inst.push(data["LM"].duration);
-                    }else {
-                        inst.push("");
-                        inst.push("");
-                    }
-                    allData.push(inst);
+                        allData.push(instSARIMA);
 
-                    var inst = [];
-                    inst.push("SSA");
-                    if(inst.push(data["SSA"])) {
-                        inst.push(data["SSA"].score);
-                        inst.push(data["SSA"].duration);
-                    }else {
-                        inst.push("");
-                        inst.push("");
-                    }
-                    allData.push(inst);
+                        var instSOAARIMA = [];
+                        instSOAARIMA.push("SOAARIMA");
+                        if (data["SOAARIMA"]) {
+                            instSOAARIMA.push(data["SOAARIMA"].score);
+                            instSOAARIMA.push(data["SOAARIMA"].duration);
+                        } else {
+                            instSOAARIMA.push("");
+                            instSOAARIMA.push("");
+                        }
+                        allData.push(instSOAARIMA);
+                        var instSARIMAG = [];
+                        instSARIMAG.push("SARIMA+GARCH");
+                        if (data["SARIMA+GARCH"]) {
+                            instSARIMAG.push(data["SARIMA+GARCH"].score);
+                            instSARIMAG.push(data["SARIMA+GARCH"].duration);
+                        } else {
+                            instSARIMAG.push("");
+                            instSARIMAG.push("");
+                        }
+                        allData.push(instSARIMAG);
+                        var SOAARIMAG = [];
+                        SOAARIMAG.push("SOAARIMA+GARCH");
+                        if (data["SOAARIMA+GARCH"]) {
+                            SOAARIMAG.push(data["SOAARIMA+GARCH"].score);
+                            SOAARIMAG.push(data["SOAARIMA+GARCH"].duration);
+                        } else {
+                            SOAARIMAG.push("");
+                            SOAARIMAG.push("");
+                        }
+                        allData.push(SOAARIMAG);
+                        var instSARFIMA = [];
+                        instSARFIMA.push("SARFIMA");
+                        if (data["SARFIMA"]) {
+                            instSARFIMA.push(data["SARFIMA"].score);
+                            instSARFIMA.push(data["SARFIMA"].duration);
+                        } else {
+                            instSARFIMA.push("");
+                            instSARFIMA.push("");
+                        }
+                        allData.push(instSARFIMA);
+                        var instSARFIMAG = [];
+                        instSARFIMAG.push("SARFIMA+GARCH");
+                        if (data["SARFIMA+GARCH"]) {
+                            instSARFIMAG.push(data["SARFIMA+GARCH"].score);
+                            instSARFIMAG.push(data["SARFIMA+GARCH"].duration);
+                        } else {
+                            instSARFIMAG.push("");
+                            instSARFIMAG.push("");
+                        }
+                        allData.push(instSARFIMAG);
 
-                    var inst = [];
-                    inst.push("SVR");
-                    if(inst.push(data["SVR"])) {
-                        inst.push(data["SVR"].score);
-                        inst.push(data["SVR"].duration);
-                    }else {
-                        inst.push("");
-                        inst.push("");
-                    }
-                    allData.push(inst);
+                        var instLM = [];
+                        instLM.push("LM");
+                        if (data["LM"]) {
+                            instLM.push(data["LM"].score);
+                            instLM.push(data["LM"].duration);
+                        } else {
+                            instLM.push("");
+                            instLM.push("");
+                        }
+                        allData.push(instLM);
 
+                        var instSSA = [];
+                        instSSA.push("SSA");
+                        if (data["SSA"]) {
+                            instSSA.push(data["SSA"].score);
+                            instSSA.push(data["SSA"].duration);
+                        } else {
+                            instSSA.push("");
+                            instSSA.push("");
+                        }
+                        allData.push(instSSA);
+
+                        var instSVR = [];
+                        instSVR.push("SVR");
+                        if (data["SVR"]) {
+                            instSVR.push(data["SVR"].score);
+                            instSVR.push(data["SVR"].duration);
+                        } else {
+                            instSVR.push("");
+                            instSVR.push("");
+                        }
+                        allData.push(instSVR);
+                    });
                     $('#testResult').DataTable({
-                        data: allData
+                        data: allData,
+                        "bDestroy": true
                     });
                 }
         );
@@ -408,7 +412,7 @@
             return false;
         });
         $.get(
-                "/getAllTestsName",
+                "/forecasting/getAllTestsName",
                 function(data) {
 
                     var selTestName = document.getElementById("selectTestName");

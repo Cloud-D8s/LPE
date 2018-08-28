@@ -9,7 +9,7 @@
  */
 const express = require('express');
 const app = express();
-const port = process.env.FORECASTING_SERVICE_PORT || 8080; // set our port
+const port = process.env.FORECASTING_SERVICE_PORT || 80; // set our port
 const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const path = require('path');
@@ -25,10 +25,10 @@ app.use(bodyParser.json());
 
 var mongo = require('mongodb');
 var MongoClient = mongo.MongoClient;
-var mongoURL = 'mongodb://'+config.mongodb.user+':'+config.mongodb.pass+
-                        '@'+config.mongodb.host+':'+config.mongodb.port;
+var mongoURL = 'mongodb://'+config.mongodb.user+':'+config.mongodb.password+
+                        '@'+config.mongodb.host+':'+config.mongodb.port+"?authMechanism=DEFAULT&authSource=admin";
 
-
+console.log(mongoURL);
 // Configure express to use handlebars templates
 var hbs = exphbs.create({
     defaultLayout: 'main',
@@ -69,7 +69,8 @@ router.get('/', function (req, res) {
 });
 router.route('/getTestData')
     .get(function (req, res) {
-        MongoClient.connect(mongoURL,function(err, db){
+        console.log(req.query.testName);
+        MongoClient.connect(mongoURL,{useNewUrlParser: true },function(err, db){
             if(err){
                 console.log(err);
                 res.send("Error Connecting to Mongodb");
@@ -80,7 +81,7 @@ router.route('/getTestData')
             else {
                 console.log('Mongo Connected');
                 var dbo = db.db(config.mongodb.dbName);
-                dbo.collection("metrics").find({},{ username: req.query.testName}).toArray(function(err, result){
+                dbo.collection("metrics").find({"username": req.query.testName},{ username: req.query.testName}).toArray(function(err, result){
                     if (err) throw res.send("Error not found");
                     else{
                         console.log(result);
@@ -94,7 +95,7 @@ router.route('/getTestData')
     });
 router.route('/getAllTestsName')
     .get(function (req, res) {
-        MongoClient.connect(mongoURL,function(err, db){
+        MongoClient.connect(mongoURL,{useNewUrlParser: true },function(err, db){
             if(err){
                 console.log(err);
                 res.send("Error Connecting to Mongodb");

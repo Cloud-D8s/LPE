@@ -8,7 +8,7 @@ module.exports = {
         'host': process.env.MONGODB_HOST || 'mongodb',
         'user': process.env.MONGODB_USER || 'user',
         'password': process.env.MONGODB_PASS || 'pass',
-        'dbName': 'performancedatas'
+        'dbName': 'performancedata'
     },
     'influxdb': {
         'port': process.env.INFLUXDB_PORT || '8086',

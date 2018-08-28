@@ -17,7 +17,7 @@ RUN npm install
 # Copying the data from the local folder to the container
 COPY . /home/ForecastingService/
 
-EXPOSE 8080
+EXPOSE 80
 
 CMD [ "npm", "start"]
 
