@@ -7,30 +7,36 @@
  * BASE SETUP
  * import the packages we need
  */
-const express    = require('express');
-const app        = express();
-const port       = process.env.FORECASTING_SERVICE_PORT || 8080; // set our port
+const express = require('express');
+const app = express();
+const port = process.env.FORECASTING_SERVICE_PORT || 8080; // set our port
 const bodyParser = require('body-parser');
-const exphbs     = require('express-handlebars');
-const path       = require('path');
+const exphbs = require('express-handlebars');
+const path = require('path');
 const formidable = require('formidable');
-const fs         = require('fs');
-const config     = require('./config');
-const exec       = require('child_process').exec;
-const publicIp   = require('public-ip');
+const fs = require('fs');
+const config = require('./config');
+const exec = require('child_process').exec;
+const publicIp = require('public-ip');
 const nodemailer = require("nodemailer");
 // use body parser so we can get info from POST and/or URL parameters
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
+var mongo = require('mongodb');
+var MongoClient = mongo.MongoClient;
+var mongoURL = 'mongodb://'+config.mongodb.user+':'+config.mongodb.pass+
+                        '@'+config.mongodb.host+':'+config.mongodb.port;
+
 
 // Configure express to use handlebars templates
 var hbs = exphbs.create({
     defaultLayout: 'main',
-    layoutsDir: path.join(__dirname,'views','layouts'),
+    layoutsDir: path.join(__dirname, 'views', 'layouts'),
     partialsDir: path.join(__dirname),
     helpers: {
         toJSON: function (object) {
-            return JSON.stringify(object, null,'\t');
+            return JSON.stringify(object, null, '\t');
         }
 
 
@@ -48,7 +54,7 @@ const router = express.Router();
 /**
  * Middleware to use for all requests
  */
-router.use(function(req, res, next) {
+router.use(function (req, res, next) {
     /**
      * Logs can be printed here while accessing any routes
      */
@@ -58,15 +64,60 @@ router.use(function(req, res, next) {
 /**
  * Base route of the router : to make sure everything is working check http://localhost:8080/forecasting)
  */
-router.get('/', function(req, res) {
-    res.json({ message: 'Welcome to the forecasting Service!'});
+router.get('/', function (req, res) {
+    res.json({message: 'Welcome to the forecasting Service!'});
 });
+router.route('/getTestData')
+    .get(function (req, res) {
+        MongoClient.connect(mongoURL,function(err, db){
+            if(err){
+                console.log(err);
+                res.send("Error Connecting to Mongodb");
+            }
+            else if(req.query.testName==""){
+                res.send("Error Testname is not specified");
+            }
+            else {
+                console.log('Mongo Connected');
+                var dbo = db.db(config.mongodb.dbName);
+                dbo.collection("metrics").find({},{ username: req.query.testName}).toArray(function(err, result){
+                    if (err) throw res.send("Error not found");
+                    else{
+                        console.log(result);
+                        res.send(result);
+                    }
+                    db.close();
+                });
+
+            }
+        });
+    });
+router.route('/getAllTestsName')
+    .get(function (req, res) {
+        MongoClient.connect(mongoURL,function(err, db){
+            if(err){
+                console.log(err);
+                res.send("Error Connecting to Mongodb");
+            }
+            else {
+                console.log('Mongo Connected');
+                var dbo = db.db(config.mongodb.dbName);
+                dbo.collection("metrics").find({}).toArray(function(err, result){
+                    if (err) throw res.send("Error not found");
+                    else{
+                        console.log(result);
+                        res.send(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    });
 /**
  * Route1:  run the forecasting service
  */
 router.route('/executeForecasting')
-    .post(function(req, res)
-    {
+    .post(function (req, res) {
         var form = new formidable.IncomingForm();
         form.parse(req, function (err, fields, files) {
             console.log(fields);
@@ -77,64 +128,67 @@ router.route('/executeForecasting')
             fs.rename(oldpath, newpath, function (err) {
                 if (err) throw err;
                 var cmd = "Rscript ForecastingService.R " +
-                    "--target="+pathToExecuteScript + " " +
-                    "--starttime="+fields.timestamp + " " +
+                    "--target=" + pathToExecuteScript + " " +
+                    "--starttime=" + fields.timestamp + " " +
                     "--type=SINGLE " +
-                    "--client="+fields.name+" " +
-                    "--predsteps="+fields.predictSteps+" " +
-                    "--influx.dbhost="+config.influxdb.host+":"+config.influxdb.port+" " +
-                    "--influx.dbuser="+config.influxdb.user+" " +
-                    "--influx.dbpassword="+config.influxdb.password+" " +
-                    "--mongo.dbhost="+config.mongodb.host+" " +
-                    "--mongo.dbuser="+config.mongodb.user+" " +
-                    "--mongo.dbpassword="+config.mongodb.password;
+                    "--client=" + fields.name + " " +
+                    "--predsteps=" + fields.predictSteps + " " +
+                    "--influx.dbhost=" + config.influxdb.host + ":" + config.influxdb.port + " " +
+                    "--influx.dbuser=" + config.influxdb.user + " " +
+                    "--influx.dbpassword=" + config.influxdb.password + " " +
+                    "--mongo.dbhost=" + config.mongodb.host + " " +
+                    "--mongo.dbuser=" + config.mongodb.user + " " +
+                    "--mongo.dbpassword=" + config.mongodb.password;
                 console.log(cmd);
-                exec(cmd, {cwd: './r_server'},function (error, stdout, stderr)
-                {
+                exec(cmd, {cwd: './r_server'}, function (error, stdout, stderr) {
                     var lines = stdout.toString().split('\n');
                     console.log(lines);
-                    if(error) {
+                    if (error) {
                         var err = error.toString().split('\n');
                         console.log(err);
                     }
-                    if(stderr) {
+                    if (stderr) {
                         var stderrr = stderr.toString().split('\n');
                         console.log(stderrr);
                     }
                 });
-                publicIp.v4().then(ipaddress => {
-                    var link = '<a href="http://'+ipaddress+':3000/" target="_blank">';
-                    var sendInfo = 'Submitted for Evaluation: <br> 1. Please use <b>'+fields.name+'</b> as default database name in Grafana. <br> 2. Please check '+link+'here </a> for graphs';
-                    res.send(sendInfo);
-                });
+                publicIp.v4().then(ipaddress =>{
+                    var link = '<a href="http://' + ipaddress + ':3000/" target="_blank">';
+                var sendInfo = 'Submitted for Evaluation: <br> 1. Please use <b>' + fields.name + '</b> as default database name in Grafana. <br> 2. Please check ' + link + 'here </a> for graphs';
+                res.send(sendInfo);
+            })
+                ;
 
             });
         });
     });
+
+
 /**
  * REGISTER OUR ROUTES
  * our router is now pointing to /forecasting
  */
 app.use('/forecasting', router);
 
-app.post('/sendMessage', function(req, res){
-    var data=req.body;
+app.post('/sendMessage', function (req, res) {
+    var data = req.body;
     var smtpTransport = nodemailer.createTransport({
         service: "gmail",
         auth: {
             user: "",
             pass: ""
-        }});
+        }
+    });
 
     smtpTransport.sendMail({  //email options
         from: data.email,
         to: "v.podolskiy@tum.de", // receiver
         subject: "[ForeCasting Service]", // subject
-        text: "\n##- Please type your reply above this line -## \n\nName:"+data.name+"\n\nEmail-Id: "+data.email +"\n\n _____Message from User________\n\n"+data.message // body
-    }, function(error, info){  //callback
-        if(error){
+        text: "\n##- Please type your reply above this line -## \n\nName:" + data.name + "\n\nEmail-Id: " + data.email + "\n\n _____Message from User________\n\n" + data.message // body
+    }, function (error, info) {  //callback
+        if (error) {
             console.log(error);
-        }else{
+        } else {
             console.log("Message sent: " + info.response);
         }
         smtpTransport.close();
@@ -143,7 +197,7 @@ app.post('/sendMessage', function(req, res){
     res.send("Message Sent");
 });
 //displays our homepage
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
     res.render('home');
 });
 app.listen(port);
