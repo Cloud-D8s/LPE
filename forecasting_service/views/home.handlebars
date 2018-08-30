@@ -1,9 +1,8 @@
-<!-- Header -->
+﻿<!-- Header -->
 <section id="header">
     <div class="inner">
         <span class="icon major fa-cloud"></span>
-        <h1>Hi, I'm <strong>Workload Forecasting Service</strong>, a fine<br />
-            little freebie from <a href="#">Cloud-Pie</a></h1>
+        <h1><strong>Workload Forecasting Service</strong></h1>
         <p>We do....</p>
         <ul class="actions">
             <li><a href="#one" class="button scrolly">Learn More</a></li>
@@ -17,9 +16,9 @@
         <div class="row 150%">
             <div class="6u 12u$(medium)">
                 <header class="major">
-                    <h2>What this service do & How does it work?</h2>
+                    <h2>What this service does & How it functions?</h2>
                 </header>
-                <p>Brief Description of the Service goes here</p>
+                <p>The Forecasting Service uses <b>10</b> forecasting models implemented in R to forecast the provided amount of values for a single uploaded time series. The forecasted values and prediction intervals are visualized in Grafana. For each model used it calculates the <i>Interval Accuracy Score</i> and <i>Model Fitting Duration</i>. That way, we determine the quality of the model for the particular time series. <b>The values in time series are assumed to be hourly</b>, the starting time value is also provided by the user. Supported forecastig models: seasonal ARIMA, seasonal ARIMA outliers-adjusted, seasonal ARIMA with GARCH, seasonal ARIMA outliers-adjusted with GARCH, seasonal ARFIMA, seasonal ARFIMA with GARCH, exponential smoothing, linear regression, singular spectrum analysis (SSA), support vector regression (SVR).</p>
             </div>
             <div class="6u$ 12u$(medium) important(medium)">
                 <span class="image fit"><img src="images/pic01.png" alt="" /></span>
@@ -28,42 +27,13 @@
     </div>
 </section>
 
-
-<!-- Three -->
-<section id="three" class="main style2 special">
-    <div class="container">
-        <header class="major">
-            <h2>Why choose this service?</h2>
-        </header>
-        <div class="row 150%">
-            <div class="4u 12u$(medium)">
-                <span class="image fit"><i class="fa fa-euro"></i></span>
-                <h3>Cost Reduction</h3>
-                <p>Using this service you can actually see reduction in the VM utilization cost.</p>
-
-            </div>
-            <div class="4u 12u$(medium)">
-                <span class="image fit"><i class="fa fa-lightbulb-o "></i></span>
-                <h3>Smart Cloud Decisions</h3>
-                <p>Whether optimizing cloud utilization or getting the best QoS, this service can provide the best method based upon rigorous analysis and machine learning techniques.</p>
-
-            </div>
-            <div class="4u$ 12u$(medium)">
-                <span class="image fit"><i class="fa fa-line-chart"></i></span>
-                <h3>Competitive Advantages</h3>
-                <p>Using this service will give your company a competitive advantage in the market</p>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Four -->
-<section id="four" class="main style1 special">
+<section id="four" class="main style2 special">
     <div class="container">
         <header class="major">
             <h2>Test Our Service?</h2>
         </header>
-        <p>Upload the CSV File containg the workload requests here to test our service.</p>
+        <p>Upload the CSV file containg the comma-separated string of request rate values here to test our service.</p>
 
         <section>
             <form id="uploadForm" method="post" action="/forecasting/executeForecasting" enctype="multipart/form-data">
@@ -126,7 +96,7 @@
         </section>
     </div>
 </section>
-<section id="five" class="main style2 special">
+<section id="five" class="main style1 special">
 <div class="our-team">
     <div class="container">
         <header class="major">
@@ -141,14 +111,13 @@
                 international conferences. <br>We permanently keep in touch with the colleagues from the research field
                 and our industrial partners, such as BMW, Huawei, Instana, SAP, and MakerSpace. For our students, we
                 regularly conduct lectures and practical courses in Cloud Computing and Internet of Things, encouraging
-                their curiosity and hands-on experience. <br>Since March 2018, we offer practical courses for IT
-                specialists from the industry in the form of Weiterbildung / Further Education.</p>
+                their curiosity and hands-on experience.</p>
         </div>
         <br>
         <div class="text-center">
             <div class="col-xs-12 col-sm-4 col-md-4 col-md-offset-2 wow fadeInDown" style="margin-top: 20px" data-wow-duration="1000ms" data-wow-delay="600ms">
                 <img src="/images/about/2.jpg" alt="" style="height: 170px" >
-                <h4>Vladimir Podolskiy </h4>
+                <h4>Vladimir Podolskiy</h4>
                 <p style="margin-top: -13px">
                     Ph.D. student and Research assistant
                 </p>
@@ -198,7 +167,7 @@
     </div>
 </div>
 </section>
-<section id="six" class="main style1 special">
+<section id="six" class="main style2 special">
 
     <div class="container">
         <header class="major">
